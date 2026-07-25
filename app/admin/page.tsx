@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation';
 import { supabase, Course, Student, getSiteUrl } from '@/lib/supabase';
 import { checkAuth, signOut } from '@/lib/auth';
 import QRCode from 'qrcode';
-import { FiUpload, FiSave, FiTrash2, FiEdit, FiDownload, FiLogOut, FiFileText, FiPlus, FiUsers, FiBookOpen, FiSearch, FiX, FiInfo } from 'react-icons/fi';
+import { FiUpload, FiSave, FiTrash2, FiEdit, FiDownload, FiLogOut, FiFileText, FiPlus, FiUsers, FiBookOpen, FiSearch, FiX, FiInfo, FiCrop, FiCheckSquare, FiSquare } from 'react-icons/fi';
 import jsPDF from 'jspdf';
 import ManageCoursesView from './ManageCoursesView';
 import toast from 'react-hot-toast';
 import ConfirmationModal from '../components/ConfirmationModal';
 import PWAInstallBanner from '../components/PWAInstallBanner';
+import PhotoCropModal from '../components/PhotoCropModal';
 
 
 export default function AdminPage() {
@@ -116,9 +117,38 @@ export default function AdminPage() {
         setLoadingDetails(false);
     };
 
+    // Photo Crop Modal State
+    const [isCropModalOpen, setIsCropModalOpen] = useState(false);
+    const [croppingImageFile, setCroppingImageFile] = useState<File | null>(null);
+
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setFormData({ ...formData, profilePhoto: e.target.files[0] });
+            const selectedFile = e.target.files[0];
+            setCroppingImageFile(selectedFile);
+            setIsCropModalOpen(true);
+            // Reset input value so re-selecting same file triggers onChange
+            e.target.value = '';
+        }
+    };
+
+    const handleCropComplete = (croppedFile: File) => {
+        setFormData(prev => ({ ...prev, profilePhoto: croppedFile }));
+        setCroppingImageFile(null);
+    };
+
+    const handleOpenEditCrop = () => {
+        if (formData.profilePhoto) {
+            setCroppingImageFile(formData.profilePhoto);
+            setIsCropModalOpen(true);
+        }
+    };
+
+    const handleSelectAllCourses = () => {
+        if (courses.length === 0) return;
+        if (formData.selectedCourses.length === courses.length) {
+            setFormData(prev => ({ ...prev, selectedCourses: [] }));
+        } else {
+            setFormData(prev => ({ ...prev, selectedCourses: courses.map(c => c.id) }));
         }
     };
 
@@ -328,6 +358,13 @@ export default function AdminPage() {
                     confirmText="Delete Student"
                     cancelText="Cancel"
                     isLoading={isDeleting}
+                />
+
+                <PhotoCropModal
+                    isOpen={isCropModalOpen}
+                    imageFile={croppingImageFile}
+                    onClose={() => setIsCropModalOpen(false)}
+                    onCropComplete={handleCropComplete}
                 />
 
                 {/* Student Detail Modal */}
@@ -601,6 +638,13 @@ export default function AdminPage() {
                                                             <div className="flex-1 min-w-0">
                                                                 <p className="text-xs font-semibold text-slate-900 truncate">{formData.profilePhoto.name}</p>
                                                                 <p className="text-[10px] text-slate-400">{(formData.profilePhoto.size / 1024).toFixed(1)} KB</p>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={handleOpenEditCrop}
+                                                                    className="mt-1 text-[11px] font-semibold text-sky-600 hover:text-sky-700 flex items-center gap-1 transition-colors"
+                                                                >
+                                                                    <FiCrop size={13} /> Adjust Crop & Position
+                                                                </button>
                                                             </div>
                                                             <button
                                                                 type="button"
@@ -627,14 +671,31 @@ export default function AdminPage() {
                                             <div className="lg:col-span-7 xl:col-span-7 flex flex-col">
                                                 <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_10px_30px_-5px_rgba(15,23,42,0.04)] p-6 flex-1 flex flex-col justify-between space-y-4">
                                                     <div>
-                                                        <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-2">
                                                             <div>
                                                                 <h3 className="text-sm font-bold text-slate-900">Assign Courses</h3>
                                                                 <p className="text-[11px] text-slate-500">Select curriculum courses for this student</p>
                                                             </div>
-                                                            <span className="px-3 py-1 bg-sky-50 text-sky-700 font-semibold text-xs rounded-xl border border-sky-100">
-                                                                {formData.selectedCourses.length} Selected
-                                                            </span>
+                                                            <div className="flex items-center gap-2">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={handleSelectAllCourses}
+                                                                    className="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition-colors border border-slate-200 flex items-center gap-1.5 active:scale-95"
+                                                                >
+                                                                    {formData.selectedCourses.length === courses.length && courses.length > 0 ? (
+                                                                        <>
+                                                                            <FiSquare size={13} className="text-slate-500" /> Deselect All
+                                                                        </>
+                                                                    ) : (
+                                                                        <>
+                                                                            <FiCheckSquare size={13} className="text-sky-600" /> Select All
+                                                                        </>
+                                                                    )}
+                                                                </button>
+                                                                <span className="px-3 py-1 bg-sky-50 text-sky-700 font-semibold text-xs rounded-xl border border-sky-100">
+                                                                    {formData.selectedCourses.length} Selected
+                                                                </span>
+                                                            </div>
                                                         </div>
 
                                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[380px] overflow-y-auto p-1 pr-2">
