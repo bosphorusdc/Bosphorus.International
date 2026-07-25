@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@400;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,7 +8,7 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 247, 249, 252;
   --background-end-rgb: 255, 255, 255;
-  --brand-color: #8ECAE6; /* Modern Sky Blue/Cyan variant for Bosphorus Branding */
+  --brand-color: #8ECAE6;
   --brand-color-soft: #E0F2F9;
   --brand-color-dark: #219EBC;
 }
@@ -15,6 +17,19 @@ body {
   color: rgb(var(--foreground-rgb));
   background: var(--background-start-rgb);
   min-height: 100vh;
+}
+
+/* Custom Typography for Real Certificate */
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-cormorant {
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.font-signature {
+  font-family: 'Great Vibes', 'Alex Brush', cursive;
 }
 
 /* Custom Scrollbar */
@@ -41,6 +56,21 @@ body {
   }
 }
 
+/* Gold Metallic Gradients & Effects */
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #9A7B38 0%, #D4AF37 40%, #B8860B 70%, #9A7B38 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-gold-gradient {
+  border-image: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #AA771C) 1;
+}
+
 /* Certificate styling */
 .certificate-bg {
   background: linear-gradient(135deg, #D4AF37 0%, #C5A028 50%, #B89023 100%);
@@ -48,18 +78,11 @@ body {
   overflow: hidden;
 }
 
-.certificate-bg::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.certificate-parchment {
+  background-color: #FDFBF7;
   background-image: 
-    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-  pointer-events: none;
+    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.8) 0%, rgba(252, 248, 238, 0.9) 70%, rgba(245, 237, 220, 0.95) 100%),
+    radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 60%);
 }
 
 .sparkle {
@@ -81,3 +104,43 @@ body {
     transform: scale(1);
   }
 }
+
+/* Print Landscape Setup */
+@media print {
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+  
+  body {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .certificate-card {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+}
+

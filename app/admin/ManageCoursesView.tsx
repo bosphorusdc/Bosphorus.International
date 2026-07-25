@@ -159,85 +159,86 @@ export default function ManageCoursesView({ onCoursesChange }: ManageCoursesView
     };
 
     return (
-        <div className="relative overflow-hidden bg-white/5 backdrop-blur-3xl rounded-[4rem] border border-white/10 shadow-2xl p-8 md:p-14">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-[100px] -mr-48 -mt-48"></div>
-
+        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-[0_10px_30px_-5px_rgba(15,23,42,0.04)] p-6 sm:p-8">
             <ConfirmationModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleConfirmDelete}
                 title="Remove course?"
                 message={`Are you sure you want to remove "${courseToDelete?.name}"?`}
-                confirmText="Delete"
+                confirmText="Remove Course"
                 cancelText="Cancel"
                 isLoading={isDeleting}
             />
 
-            <div className="relative z-10">
-                <div className="p-8 md:p-14 border-b border-white/10 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div className="text-center md:text-left">
-                        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-none">Manage Courses</h2>
+            <div>
+                {/* Section Header */}
+                <div className="pb-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 className="text-lg font-bold text-slate-900">Curriculum Courses</h2>
+                        <p className="text-xs text-slate-500 font-medium mt-0.5">Manage existing courses and practical session requirements</p>
                     </div>
                     {!isAdding && (
                         <button
                             onClick={() => setIsAdding(true)}
-                            className="w-full md:w-auto flex items-center justify-center px-10 py-5 bg-white text-[#219EBC] rounded-[1.8rem] hover:bg-[#F0F7FA] transition shadow-xl shadow-black/10 font-black text-[10px] md:text-xs uppercase tracking-widest active:scale-95 whitespace-nowrap"
+                            className="flex items-center justify-center px-4 py-2.5 bg-[#18181b] hover:bg-black text-white rounded-2xl font-semibold text-xs shadow-sm transition-all active:scale-[0.98] whitespace-nowrap"
                         >
-                            <FiPlus className="mr-2 text-lg" />
-                            Add Course
+                            <FiPlus className="mr-1.5 text-sm" />
+                            Add New Course
                         </button>
                     )}
                 </div>
 
-                <div className="p-8 md:p-14">
+                <div className="pt-6">
+                    {/* Add Course Form */}
                     {isAdding && (
-                        <div className="bg-white/10 backdrop-blur-xl p-10 rounded-[2.5rem] border border-white/10 mb-12 animate-in slide-in-from-top-4 fade-in duration-300">
-                            <div className="flex items-center justify-between mb-10">
-                                <h3 className="text-2xl font-black text-white tracking-tight uppercase">New Course Details</h3>
-                                <button onClick={() => setIsAdding(false)} className="w-10 h-10 flex items-center justify-center text-white/30 hover:text-white transition bg-white/5 rounded-full">
-                                    <FiX size={20} />
+                        <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 mb-6 animate-in fade-in duration-200">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-sm font-bold text-slate-900">New Course Details</h3>
+                                <button onClick={() => setIsAdding(false)} className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 rounded-xl transition-colors">
+                                    <FiX size={18} />
                                 </button>
                             </div>
-                            <div className="grid md:grid-cols-2 gap-10 text-white">
-                                <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Course Name</label>
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-slate-700">Course Name</label>
                                     <input
                                         autoFocus
                                         type="text"
                                         value={newCourseForm.course_name}
                                         onChange={(e) => setNewCourseForm({ ...newCourseForm, course_name: e.target.value })}
-                                        placeholder="Course Name"
-                                        className="w-full px-8 py-6 bg-black/20 border border-white/10 rounded-[1.5rem] focus:outline-none focus:ring-4 focus:ring-white/10 text-white font-bold placeholder:text-white/20"
+                                        placeholder="e.g. Advanced Maritime Safety"
+                                        className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:border-slate-300 focus:ring-4 focus:ring-sky-500/10 text-slate-800 font-medium text-sm placeholder:text-slate-400 transition-all"
                                     />
                                 </div>
-                                <div className="space-y-4">
-                                    <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">Course Type</label>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-slate-700">Course Type</label>
                                     <div className="relative">
                                         <select
                                             value={newCourseForm.session_type}
                                             onChange={(e) => setNewCourseForm({ ...newCourseForm, session_type: e.target.value })}
-                                            className="w-full px-8 py-6 bg-black/20 border border-white/10 rounded-[1.5rem] focus:outline-none focus:ring-4 focus:ring-white/10 text-white font-bold appearance-none outline-none cursor-pointer"
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:border-slate-300 focus:ring-4 focus:ring-sky-500/10 text-slate-800 font-medium text-sm appearance-none outline-none cursor-pointer pr-10"
                                         >
-                                            <option value="Theory" className="bg-[#1A7A91] text-white">Theory Only</option>
-                                            <option value="Theory and Practical" className="bg-[#1A7A91] text-white">Theory & Practical</option>
+                                            <option value="Theory">Theory Only</option>
+                                            <option value="Theory and Practical">Theory & Practical</option>
                                         </select>
-                                        <div className="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
-                                            <FiBookOpen size={20} />
+                                        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                            <FiBookOpen size={16} />
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex justify-end space-x-6 mt-12">
+                            <div className="flex justify-end items-center space-x-3 mt-5">
                                 <button
                                     onClick={() => setIsAdding(false)}
-                                    className="px-8 py-5 text-white underline font-black uppercase tracking-widest text-[10px]"
+                                    className="px-4 py-2 text-slate-500 hover:text-slate-700 text-xs font-semibold"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleAddCourse}
                                     disabled={saving || !newCourseForm.course_name.trim()}
-                                    className="px-12 py-5 bg-white text-[#219EBC] rounded-[1.5rem] hover:shadow-2xl hover:shadow-black/20 transition font-black uppercase tracking-widest text-[10px] disabled:opacity-50"
+                                    className="px-5 py-2.5 bg-slate-900 hover:bg-black text-white rounded-2xl font-semibold text-xs shadow-sm transition-all disabled:opacity-50"
                                 >
                                     {saving ? 'Saving...' : 'Save Course'}
                                 </button>
@@ -246,92 +247,93 @@ export default function ManageCoursesView({ onCoursesChange }: ManageCoursesView
                     )}
 
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-40 space-y-8">
-                            <div className="w-16 h-16 border-[6px] border-white/10 border-t-white rounded-full animate-spin"></div>
-                            <p className="text-white/40 font-black text-[10px] uppercase tracking-[0.3em]">Loading Courses...</p>
+                        <div className="flex flex-col items-center justify-center py-20 space-y-3">
+                            <div className="w-8 h-8 border-2 border-sky-500/20 border-t-sky-600 rounded-full animate-spin"></div>
+                            <p className="text-xs font-medium text-slate-400">Loading courses...</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto text-white">
-                            <table className="w-full text-left">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-white/10">
-                                        <th className="px-8 py-8 text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">No</th>
-                                        <th className="px-8 py-8 text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Course Name</th>
-                                        <th className="px-8 py-8 text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Type</th>
-                                        <th className="px-8 py-8 text-[10px] font-black text-white/30 uppercase tracking-[0.3em] text-right">Actions</th>
+                                    <tr className="border-b border-slate-100 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                                        <th className="px-4 py-3">No</th>
+                                        <th className="px-4 py-3">Course Name</th>
+                                        <th className="px-4 py-3">Type</th>
+                                        <th className="px-4 py-3 text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-white/5">
+                                <tbody className="divide-y divide-slate-100">
                                     {courses.map((course) => (
-                                        <tr key={course.id} className="hover:bg-white/5 transition-all group">
-                                            <td className="px-8 py-10 text-sm font-black text-white/20">
+                                        <tr key={course.id} className="hover:bg-slate-50/70 transition-colors group">
+                                            <td className="px-4 py-3.5 text-xs font-bold text-slate-400">
                                                 {course.course_number.toString().padStart(2, '0')}
                                             </td>
-                                            <td className="px-8 py-10">
+                                            <td className="px-4 py-3.5">
                                                 {editingId === course.id ? (
                                                     <input
                                                         type="text"
                                                         value={editForm.course_name}
                                                         onChange={(e) => setEditForm({ ...editForm, course_name: e.target.value })}
-                                                        className="w-full px-6 py-4 bg-black/20 border border-white/10 rounded-[1.2rem] text-white font-bold outline-none focus:ring-2 focus:ring-white/10"
+                                                        className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium text-sm outline-none focus:ring-2 focus:ring-sky-500/20"
                                                     />
                                                 ) : (
-                                                    <span className="text-2xl font-black text-white tracking-tighter uppercase">{course.course_name}</span>
+                                                    <span className="text-sm font-semibold text-slate-900">{course.course_name}</span>
                                                 )}
                                             </td>
-                                            <td className="px-8 py-10">
+                                            <td className="px-4 py-3.5">
                                                 {editingId === course.id ? (
                                                     <select
                                                         value={editForm.session_type}
                                                         onChange={(e) => setEditForm({ ...editForm, session_type: e.target.value })}
-                                                        className="w-full px-6 py-4 bg-black/20 border border-white/10 rounded-[1.2rem] text-white font-bold outline-none focus:ring-2 focus:ring-white/10 appearance-none cursor-pointer"
+                                                        className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-900 font-medium text-xs outline-none focus:ring-2 focus:ring-sky-500/20"
                                                     >
-                                                        <option value="Theory" className="bg-[#1A7A91] text-white">Theory Only</option>
-                                                        <option value="Theory and Practical" className="bg-[#1A7A91] text-white">Theory & Practical</option>
+                                                        <option value="Theory">Theory Only</option>
+                                                        <option value="Theory and Practical">Theory & Practical</option>
                                                     </select>
                                                 ) : (
-                                                    <span className={`inline-flex px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest backdrop-blur-md ${course.session_type === 'Theory'
-                                                        ? 'bg-white/10 text-white border border-white/10'
-                                                        : 'bg-white/20 text-white border border-white/20'
-                                                        }`}>
+                                                    <span className={`inline-flex px-2.5 py-1 rounded-lg text-[11px] font-semibold ${
+                                                        course.session_type === 'Theory'
+                                                            ? 'bg-slate-100 text-slate-700'
+                                                            : 'bg-sky-50 text-sky-700 border border-sky-100'
+                                                    }`}>
                                                         {course.session_type === 'Theory' ? 'Theory Only' : 'Theory & Practical'}
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="px-8 py-10 text-right">
+                                            <td className="px-4 py-3.5 text-right">
                                                 {editingId === course.id ? (
-                                                    <div className="flex justify-end space-x-4">
+                                                    <div className="flex justify-end space-x-2">
                                                         <button
                                                             onClick={() => handleUpdate(course.id)}
                                                             disabled={saving}
-                                                            className="w-14 h-14 flex items-center justify-center bg-white text-[#219EBC] rounded-2xl hover:scale-110 transition shadow-xl"
+                                                            className="p-2 bg-slate-900 text-white rounded-xl hover:bg-black transition shadow-sm"
                                                             title="Save"
                                                         >
-                                                            <FiSave size={22} />
+                                                            <FiSave size={16} />
                                                         </button>
                                                         <button
                                                             onClick={cancelEdit}
-                                                            className="w-14 h-14 flex items-center justify-center bg-white/10 text-white rounded-2xl hover:bg-white/20 transition"
+                                                            className="p-2 bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200 transition"
                                                             title="Cancel"
                                                         >
-                                                            <FiX size={22} />
+                                                            <FiX size={16} />
                                                         </button>
                                                     </div>
                                                 ) : (
-                                                    <div className="flex justify-end space-x-4 transition-all duration-500">
+                                                    <div className="flex justify-end space-x-1.5">
                                                         <button
                                                             onClick={() => startEdit(course)}
-                                                            className="w-14 h-14 flex items-center justify-center bg-white/10 text-white border border-white/10 rounded-2xl hover:bg-white hover:text-[#219EBC] transition-all hover:shadow-2xl hover:shadow-black/20"
+                                                            className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors"
                                                             title="Edit"
                                                         >
-                                                            <FiEdit2 size={20} />
+                                                            <FiEdit2 size={16} />
                                                         </button>
                                                         <button
                                                             onClick={() => openDeleteModal(course.id, course.course_name)}
-                                                            className="w-14 h-14 flex items-center justify-center bg-white/10 text-white border border-white/10 rounded-2xl hover:bg-red-500 hover:border-red-500 transition-all"
+                                                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                                                             title="Delete"
                                                         >
-                                                            <FiTrash2 size={20} />
+                                                            <FiTrash2 size={16} />
                                                         </button>
                                                     </div>
                                                 )}
@@ -340,8 +342,8 @@ export default function ManageCoursesView({ onCoursesChange }: ManageCoursesView
                                     ))}
                                     {courses.length === 0 && (
                                         <tr>
-                                            <td colSpan={4} className="px-8 py-48 text-center text-white/5 font-black text-6xl uppercase tracking-tighter">
-                                                No Courses
+                                            <td colSpan={4} className="px-4 py-16 text-center text-slate-400 font-medium text-sm">
+                                                No courses configured yet. Click "Add New Course" to get started.
                                             </td>
                                         </tr>
                                     )}
