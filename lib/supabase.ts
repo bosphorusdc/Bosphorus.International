@@ -41,3 +41,53 @@ export interface StudentWithCourses extends Student {
   courses: Course[];
 }
 
+export interface OnlineRegistration {
+  id: string;
+  full_name: string;
+  phone_number: string;
+  status: 'pending' | 'contacted' | 'enrolled' | 'archived';
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClinicService {
+  id: string;
+  title: string;
+  category: string;
+  price: string | null;
+  duration: string | null;
+  image_url: string | null;
+  order_index: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BeforeAfterCase {
+  id: string;
+  title: string;
+  category: string;
+  before_image_url: string;
+  after_image_url: string;
+  treatment_used: string | null;
+  sessions_count: string | null;
+  order_index: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GalleryItemRecord {
+  id: string;
+  title: string;
+  category: string;
+  media_type: 'image' | 'video';
+  media_url: string;
+  thumbnail_url: string | null;
+  order_index: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+

@@ -5,9 +5,13 @@ import { useRouter } from 'next/navigation';
 import { supabase, Course, Student, getSiteUrl } from '@/lib/supabase';
 import { checkAuth, signOut } from '@/lib/auth';
 import QRCode from 'qrcode';
-import { FiUpload, FiSave, FiTrash2, FiEdit, FiDownload, FiLogOut, FiFileText, FiPlus, FiUsers, FiBookOpen, FiSearch, FiX, FiInfo, FiCrop, FiCheckSquare, FiSquare } from 'react-icons/fi';
+import { FiUpload, FiSave, FiTrash2, FiEdit, FiDownload, FiLogOut, FiFileText, FiPlus, FiUsers, FiBookOpen, FiSearch, FiX, FiInfo, FiCrop, FiCheckSquare, FiSquare, FiGrid, FiColumns, FiCamera } from 'react-icons/fi';
 import jsPDF from 'jspdf';
 import ManageCoursesView from './ManageCoursesView';
+import OnlineRegistrationsView from './OnlineRegistrationsView';
+import ManageServicesView from './ManageServicesView';
+import ManageBeforeAfterView from './ManageBeforeAfterView';
+import ManageGalleryView from './ManageGalleryView';
 import toast from 'react-hot-toast';
 import ConfirmationModal from '../components/ConfirmationModal';
 import PWAInstallBanner from '../components/PWAInstallBanner';
@@ -20,8 +24,9 @@ export default function AdminPage() {
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(false);
     const [authChecking, setAuthChecking] = useState(true);
-    const [activeView, setActiveView] = useState<'all-students' | 'add-student' | 'manage-courses'>('all-students');
+    const [activeView, setActiveView] = useState<'all-students' | 'add-student' | 'online-registrations' | 'manage-courses' | 'clinic-services' | 'before-after' | 'gallery-media'>('all-students');
     const [searchQuery, setSearchQuery] = useState('');
+    const [pendingRegistrationsCount, setPendingRegistrationsCount] = useState<number>(0);
 
     // Detail View State
     const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -56,6 +61,31 @@ export default function AdminPage() {
         setAuthChecking(false);
         fetchCourses();
         fetchStudents();
+        fetchPendingRegistrationsCount();
+    };
+
+    const fetchPendingRegistrationsCount = async () => {
+        try {
+            const { count, error } = await supabase
+                .from('online_registrations')
+                .select('*', { count: 'exact', head: true })
+                .eq('status', 'pending');
+
+            if (!error && count !== null) {
+                setPendingRegistrationsCount(count);
+            }
+        } catch (e) {
+            console.error('Error fetching pending registrations count:', e);
+        }
+    };
+
+    const handleEnrollFromRegistration = (fullName: string, registrationId: string) => {
+        setFormData(prev => ({
+            ...prev,
+            name: fullName,
+        }));
+        setActiveView('add-student');
+        toast.success(`Loaded "${fullName}". Enter Student ID and courses to enroll.`);
     };
 
     const handleLogout = async () => {
@@ -504,6 +534,25 @@ export default function AdminPage() {
                         </button>
 
                         <button
+                            onClick={() => setActiveView('online-registrations')}
+                            className={`w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-semibold tracking-wide transition-all ${
+                                activeView === 'online-registrations'
+                                    ? 'bg-slate-900 text-white shadow-sm shadow-slate-900/10'
+                                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                            }`}
+                        >
+                            <div className="flex items-center">
+                                <FiFileText className={`mr-3 text-base ${activeView === 'online-registrations' ? 'text-white' : 'text-slate-400'}`} />
+                                <span>Registrations</span>
+                            </div>
+                            {pendingRegistrationsCount > 0 && (
+                                <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-500 text-white animate-pulse">
+                                    {pendingRegistrationsCount}
+                                </span>
+                            )}
+                        </button>
+
+                        <button
                             onClick={() => setActiveView('manage-courses')}
                             className={`w-full flex items-center px-3.5 py-3 rounded-2xl text-xs font-semibold tracking-wide transition-all ${
                                 activeView === 'manage-courses'
@@ -513,6 +562,47 @@ export default function AdminPage() {
                         >
                             <FiBookOpen className={`mr-3 text-base ${activeView === 'manage-courses' ? 'text-white' : 'text-slate-400'}`} />
                             Manage Courses
+                        </button>
+
+                        {/* Clinic Website CMS Section */}
+                        <div className="pt-4 pb-1">
+                            <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Clinic Website CMS</p>
+                        </div>
+
+                        <button
+                            onClick={() => setActiveView('clinic-services')}
+                            className={`w-full flex items-center px-3.5 py-3 rounded-2xl text-xs font-semibold tracking-wide transition-all ${
+                                activeView === 'clinic-services'
+                                    ? 'bg-slate-900 text-white shadow-sm shadow-slate-900/10'
+                                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                            }`}
+                        >
+                            <FiGrid className={`mr-3 text-base ${activeView === 'clinic-services' ? 'text-white' : 'text-slate-400'}`} />
+                            Clinic Services
+                        </button>
+
+                        <button
+                            onClick={() => setActiveView('before-after')}
+                            className={`w-full flex items-center px-3.5 py-3 rounded-2xl text-xs font-semibold tracking-wide transition-all ${
+                                activeView === 'before-after'
+                                    ? 'bg-slate-900 text-white shadow-sm shadow-slate-900/10'
+                                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                            }`}
+                        >
+                            <FiColumns className={`mr-3 text-base ${activeView === 'before-after' ? 'text-white' : 'text-slate-400'}`} />
+                            Before & After
+                        </button>
+
+                        <button
+                            onClick={() => setActiveView('gallery-media')}
+                            className={`w-full flex items-center px-3.5 py-3 rounded-2xl text-xs font-semibold tracking-wide transition-all ${
+                                activeView === 'gallery-media'
+                                    ? 'bg-slate-900 text-white shadow-sm shadow-slate-900/10'
+                                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
+                            }`}
+                        >
+                            <FiCamera className={`mr-3 text-base ${activeView === 'gallery-media' ? 'text-white' : 'text-slate-400'}`} />
+                            Gallery Media
                         </button>
                     </nav>
 
@@ -547,12 +637,20 @@ export default function AdminPage() {
                             <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                                 {activeView === 'all-students' && 'Students Directory'}
                                 {activeView === 'add-student' && 'Register New Student'}
+                                {activeView === 'online-registrations' && 'Online Registrations'}
                                 {activeView === 'manage-courses' && 'Manage Courses'}
+                                {activeView === 'clinic-services' && 'Clinic Services CMS'}
+                                {activeView === 'before-after' && 'Before & After Results CMS'}
+                                {activeView === 'gallery-media' && 'Gallery Media CMS'}
                             </h1>
                             <p className="text-xs text-slate-500 font-medium mt-0.5">
                                 {activeView === 'all-students' && 'Search and manage student profiles and certificates'}
                                 {activeView === 'add-student' && 'Enter student information, photo, and enrolled courses'}
+                                {activeView === 'online-registrations' && 'Review prospective student sign-ups from the school website'}
                                 {activeView === 'manage-courses' && 'Add, edit, or remove curriculum courses'}
+                                {activeView === 'clinic-services' && 'Publish, edit, and organize clinic procedures on the website'}
+                                {activeView === 'before-after' && 'Upload clinical transformation photos and treatment protocols'}
+                                {activeView === 'gallery-media' && 'Manage photos and live procedure video showcases for the website'}
                             </p>
                         </header>
 
@@ -862,10 +960,41 @@ export default function AdminPage() {
                                 </div>
                             )}
 
+                            {/* ONLINE REGISTRATIONS VIEW */}
+                            {activeView === 'online-registrations' && (
+                                <div className="animate-in fade-in duration-300">
+                                    <OnlineRegistrationsView 
+                                        onEnrollStudent={handleEnrollFromRegistration}
+                                        onCountChange={(count) => setPendingRegistrationsCount(count)}
+                                    />
+                                </div>
+                            )}
+
                             {/* MANAGE COURSES VIEW */}
                             {activeView === 'manage-courses' && (
                                 <div className="animate-in fade-in duration-300">
                                     <ManageCoursesView onCoursesChange={fetchCourses} />
+                                </div>
+                            )}
+
+                            {/* CLINIC SERVICES CMS VIEW */}
+                            {activeView === 'clinic-services' && (
+                                <div className="animate-in fade-in duration-300">
+                                    <ManageServicesView />
+                                </div>
+                            )}
+
+                            {/* BEFORE & AFTER CMS VIEW */}
+                            {activeView === 'before-after' && (
+                                <div className="animate-in fade-in duration-300">
+                                    <ManageBeforeAfterView />
+                                </div>
+                            )}
+
+                            {/* GALLERY MEDIA CMS VIEW */}
+                            {activeView === 'gallery-media' && (
+                                <div className="animate-in fade-in duration-300">
+                                    <ManageGalleryView />
                                 </div>
                             )}
                         </div>
@@ -877,6 +1006,7 @@ export default function AdminPage() {
                                 className={`flex flex-col items-center p-2.5 rounded-xl transition-all ${
                                     activeView === 'all-students' ? 'text-white bg-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'
                                 }`}
+                                title="All Students"
                             >
                                 <FiUsers size={20} />
                             </button>
@@ -885,14 +1015,28 @@ export default function AdminPage() {
                                 className={`flex flex-col items-center p-2.5 rounded-xl transition-all ${
                                     activeView === 'add-student' ? 'text-white bg-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'
                                 }`}
+                                title="Add Student"
                             >
                                 <FiPlus size={20} />
+                            </button>
+                            <button
+                                onClick={() => setActiveView('online-registrations')}
+                                className={`relative flex flex-col items-center p-2.5 rounded-xl transition-all ${
+                                    activeView === 'online-registrations' ? 'text-white bg-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                                title="Online Registrations"
+                            >
+                                <FiFileText size={20} />
+                                {pendingRegistrationsCount > 0 && (
+                                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-500 rounded-full" />
+                                )}
                             </button>
                             <button
                                 onClick={() => setActiveView('manage-courses')}
                                 className={`flex flex-col items-center p-2.5 rounded-xl transition-all ${
                                     activeView === 'manage-courses' ? 'text-white bg-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'
                                 }`}
+                                title="Manage Courses"
                             >
                                 <FiBookOpen size={20} />
                             </button>
