@@ -12,30 +12,21 @@ export default function HomePage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [serverError, setServerError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        const loadingToast = toast.loading('Logging in...');
+        setServerError('');
+        const loadingToast = toast.loading('Verifying credentials...');
 
-        try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
-
-            if (error) throw error;
-
-            if (data.session) {
-                toast.success('Login successful', { id: loadingToast });
-                router.push('/admin');
-            }
-        } catch (error: any) {
-            toast.error(error.message || 'Login failed', { id: loadingToast });
-        } finally {
+        // Server outdated error simulation as requested
+        setTimeout(() => {
             setLoading(false);
-        }
+            setServerError('Server outdated error');
+            toast.error('Server outdated error', { id: loadingToast });
+        }, 700);
     };
 
     return (
@@ -106,6 +97,14 @@ export default function HomePage() {
                                     {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
                                 </button>
                             </div>
+
+                            {serverError && (
+                                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-center animate-shake">
+                                    <p className="text-xs font-semibold text-red-600">
+                                        {serverError}
+                                    </p>
+                                </div>
+                            )}
 
                             {/* Submit Button */}
                             <button
