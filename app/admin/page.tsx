@@ -9,9 +9,6 @@ import { FiUpload, FiSave, FiTrash2, FiEdit, FiDownload, FiLogOut, FiFileText, F
 import jsPDF from 'jspdf';
 import ManageCoursesView from './ManageCoursesView';
 import OnlineRegistrationsView from './OnlineRegistrationsView';
-import ManageServicesView from './ManageServicesView';
-import ManageBeforeAfterView from './ManageBeforeAfterView';
-import ManageGalleryView from './ManageGalleryView';
 import toast from 'react-hot-toast';
 import ConfirmationModal from '../components/ConfirmationModal';
 import PWAInstallBanner from '../components/PWAInstallBanner';
@@ -24,7 +21,7 @@ export default function AdminPage() {
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(false);
     const [authChecking, setAuthChecking] = useState(true);
-    const [activeView, setActiveView] = useState<'all-students' | 'add-student' | 'online-registrations' | 'manage-courses' | 'clinic-services' | 'before-after' | 'gallery-media'>('all-students');
+    const [activeView, setActiveView] = useState<'all-students' | 'add-student' | 'online-registrations' | 'manage-courses'>('all-students');
     const [searchQuery, setSearchQuery] = useState('');
     const [pendingRegistrationsCount, setPendingRegistrationsCount] = useState<number>(0);
 
@@ -563,47 +560,6 @@ export default function AdminPage() {
                             <FiBookOpen className={`mr-3 text-base ${activeView === 'manage-courses' ? 'text-white' : 'text-slate-400'}`} />
                             Manage Courses
                         </button>
-
-                        {/* Clinic Website CMS Section */}
-                        <div className="pt-4 pb-1">
-                            <p className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Clinic Website CMS</p>
-                        </div>
-
-                        <button
-                            onClick={() => setActiveView('clinic-services')}
-                            className={`w-full flex items-center px-3.5 py-3 rounded-2xl text-xs font-semibold tracking-wide transition-all ${
-                                activeView === 'clinic-services'
-                                    ? 'bg-slate-900 text-white shadow-sm shadow-slate-900/10'
-                                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
-                            }`}
-                        >
-                            <FiGrid className={`mr-3 text-base ${activeView === 'clinic-services' ? 'text-white' : 'text-slate-400'}`} />
-                            Clinic Services
-                        </button>
-
-                        <button
-                            onClick={() => setActiveView('before-after')}
-                            className={`w-full flex items-center px-3.5 py-3 rounded-2xl text-xs font-semibold tracking-wide transition-all ${
-                                activeView === 'before-after'
-                                    ? 'bg-slate-900 text-white shadow-sm shadow-slate-900/10'
-                                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
-                            }`}
-                        >
-                            <FiColumns className={`mr-3 text-base ${activeView === 'before-after' ? 'text-white' : 'text-slate-400'}`} />
-                            Before & After
-                        </button>
-
-                        <button
-                            onClick={() => setActiveView('gallery-media')}
-                            className={`w-full flex items-center px-3.5 py-3 rounded-2xl text-xs font-semibold tracking-wide transition-all ${
-                                activeView === 'gallery-media'
-                                    ? 'bg-slate-900 text-white shadow-sm shadow-slate-900/10'
-                                    : 'text-slate-600 hover:bg-slate-100/80 hover:text-slate-900'
-                            }`}
-                        >
-                            <FiCamera className={`mr-3 text-base ${activeView === 'gallery-media' ? 'text-white' : 'text-slate-400'}`} />
-                            Gallery Media
-                        </button>
                     </nav>
 
                     {/* Footer / Logout */}
@@ -639,18 +595,12 @@ export default function AdminPage() {
                                 {activeView === 'add-student' && 'Register New Student'}
                                 {activeView === 'online-registrations' && 'Online Registrations'}
                                 {activeView === 'manage-courses' && 'Manage Courses'}
-                                {activeView === 'clinic-services' && 'Clinic Services CMS'}
-                                {activeView === 'before-after' && 'Before & After Results CMS'}
-                                {activeView === 'gallery-media' && 'Gallery Media CMS'}
                             </h1>
                             <p className="text-xs text-slate-500 font-medium mt-0.5">
                                 {activeView === 'all-students' && 'Search and manage student profiles and certificates'}
                                 {activeView === 'add-student' && 'Enter student information, photo, and enrolled courses'}
                                 {activeView === 'online-registrations' && 'Review prospective student sign-ups from the school website'}
                                 {activeView === 'manage-courses' && 'Add, edit, or remove curriculum courses'}
-                                {activeView === 'clinic-services' && 'Publish, edit, and organize clinic procedures on the website'}
-                                {activeView === 'before-after' && 'Upload clinical transformation photos and treatment protocols'}
-                                {activeView === 'gallery-media' && 'Manage photos and live procedure video showcases for the website'}
                             </p>
                         </header>
 
@@ -974,27 +924,6 @@ export default function AdminPage() {
                             {activeView === 'manage-courses' && (
                                 <div className="animate-in fade-in duration-300">
                                     <ManageCoursesView onCoursesChange={fetchCourses} />
-                                </div>
-                            )}
-
-                            {/* CLINIC SERVICES CMS VIEW */}
-                            {activeView === 'clinic-services' && (
-                                <div className="animate-in fade-in duration-300">
-                                    <ManageServicesView />
-                                </div>
-                            )}
-
-                            {/* BEFORE & AFTER CMS VIEW */}
-                            {activeView === 'before-after' && (
-                                <div className="animate-in fade-in duration-300">
-                                    <ManageBeforeAfterView />
-                                </div>
-                            )}
-
-                            {/* GALLERY MEDIA CMS VIEW */}
-                            {activeView === 'gallery-media' && (
-                                <div className="animate-in fade-in duration-300">
-                                    <ManageGalleryView />
                                 </div>
                             )}
                         </div>
