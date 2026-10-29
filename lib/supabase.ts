@@ -45,6 +45,8 @@ export interface OnlineRegistration {
   id: string;
   full_name: string;
   phone_number: string;
+  location?: string | null;
+  package_tier?: string | null;
   status: 'pending' | 'contacted' | 'enrolled' | 'archived';
   notes: string | null;
   created_at: string;

@@ -13,7 +13,9 @@ import {
     FiClock, 
     FiCalendar, 
     FiAlertCircle,
-    FiUser
+    FiUser,
+    FiMapPin,
+    FiAward
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import ConfirmationModal from '../components/ConfirmationModal';
@@ -287,6 +289,23 @@ export default function OnlineRegistrationsView({ onEnrollStudent, onCountChange
                                         <h3 className="text-base font-bold text-slate-900 tracking-tight truncate">
                                             {reg.full_name}
                                         </h3>
+
+                                        {/* VIP vs Regular Badge */}
+                                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+                                            reg.package_tier === 'vip'
+                                                ? 'bg-purple-100 text-purple-900 border border-purple-200'
+                                                : 'bg-slate-100 text-slate-700 border border-slate-200'
+                                        }`}>
+                                            {reg.package_tier === 'vip' ? (
+                                                <>
+                                                    <FiAward className="w-3 h-3 text-purple-600" />
+                                                    <span>VIP Session</span>
+                                                </>
+                                            ) : (
+                                                <span>Regular Session</span>
+                                            )}
+                                        </span>
+
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
                                             reg.status === 'pending'
                                                 ? 'bg-amber-100 text-amber-800 border border-amber-200'
@@ -323,6 +342,14 @@ export default function OnlineRegistrationsView({ onEnrollStudent, onCountChange
                                                 )}
                                             </button>
                                         </div>
+
+                                        {/* Location */}
+                                        {reg.location && (
+                                            <div className="flex items-center gap-1 text-slate-600 font-medium">
+                                                <FiMapPin className="w-3.5 h-3.5 text-slate-400" />
+                                                <span>{reg.location}</span>
+                                            </div>
+                                        )}
 
                                         {/* Timestamp */}
                                         <div className="flex items-center gap-1 text-slate-400">
