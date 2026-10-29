@@ -21,12 +21,25 @@ export default function HomePage() {
         setServerError('');
         const loadingToast = toast.loading('Verifying credentials...');
 
-        // Server outdated error simulation as requested
-        setTimeout(() => {
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email.trim(),
+                password: password,
+            });
+
+            if (error) throw error;
+
+            if (data.session) {
+                toast.success('Login successful', { id: loadingToast });
+                router.push('/admin');
+            }
+        } catch (error: any) {
+            const msg = error?.message || 'Login failed. Please verify your credentials.';
+            setServerError(msg);
+            toast.error(msg, { id: loadingToast });
+        } finally {
             setLoading(false);
-            setServerError('Server outdated error');
-            toast.error('Server outdated error', { id: loadingToast });
-        }, 700);
+        }
     };
 
     return (
